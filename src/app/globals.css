@@ -1,27 +1,44 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+.searchPokemon {
+  border-radius: 4px;
+  display: block;
+  margin: 20px auto;
+  max-width: 100%;
+  padding: 5px;
+  width: 20%;
+  border: 1px solid;
+  color: #0e6f9f;
+  @media screen and (max-width: 768px) {
+    width: 50%;
+  }
 
-:root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
+  @media screen and (max-width: 390px) {
+    width: 50%;
   }
 }
 
-body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+.centered-img {
+  display: block;
+  margin: 0 auto;
+  max-width: 100%;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.pagination button {
+  color: white;
+  margin: 10px;
+  padding: 5px;
+  background-color: #0e6f9f;
+  border-radius: 4px;
+  border: none;
+  width: 100px;
+}
+
+.pagination h3 {
+  margin: 0 10px;
 }
