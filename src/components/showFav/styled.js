@@ -18,16 +18,3 @@ export const Main = styled.div`
 
     
 `;
-export const ShowFavoritesButton = styled.button`
-  background-color: orange;
-  color: #fff;
-  border: none;
-  border-radius: 4px;
-  padding: 6px 16px;
-  cursor: pointer;
-  font-size: 16px;
-
-  &:hover {
-    background-color: #d47613;
-  }
-`;

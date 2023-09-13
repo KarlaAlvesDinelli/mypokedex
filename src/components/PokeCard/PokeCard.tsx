@@ -1,6 +1,8 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
-import { Card, CardTitle } from "./styled";
+import { Card, CardTitle, FavoriteButton } from "./styled";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faStar } from "@fortawesome/free-solid-svg-icons";
 
 type Props = {
   name: string;
@@ -8,7 +10,31 @@ type Props = {
 };
 
 const PokeCard = ({ name, id }: Props) => {
-  console.log(id);
+  const [isFavorite, setIsFavorite] = useState(false);
+
+  useEffect(() => {
+    const favorites = JSON.parse(localStorage.getItem("favorites") || "[]");
+    setIsFavorite(favorites.includes(id));
+  }, [id]);
+
+  const handleFavoriteClick = () => {
+    const newIsFavorite = !isFavorite;
+    setIsFavorite(newIsFavorite);
+
+    const favorites = JSON.parse(localStorage.getItem("favorites") || "[]");
+
+    if (newIsFavorite) {
+      favorites.push(id);
+    } else {
+      const index = favorites.indexOf(id);
+      if (index !== -1) {
+        favorites.splice(index, 1);
+      }
+    }
+
+    localStorage.setItem("favorites", JSON.stringify(favorites));
+  };
+
   return (
     <Card>
       <Image
@@ -19,6 +45,14 @@ const PokeCard = ({ name, id }: Props) => {
         quality={100}
       />
       <CardTitle>{name}</CardTitle>
+      <FavoriteButton onClick={handleFavoriteClick}>
+        <div className="star-wrapper">
+          <FontAwesomeIcon
+            icon={faStar}
+            color={isFavorite ? "orange" : "gray"}
+          />
+        </div>
+      </FavoriteButton>
     </Card>
   );
 };

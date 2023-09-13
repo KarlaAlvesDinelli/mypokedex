@@ -1,9 +1,13 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
 import { PokeApi } from "@/api/api";
-import React, { useEffect, useMemo, useState } from "react";
-import { Main } from "./styled";
+import { useEffect, useMemo, useState } from "react";
+import { Main, ShowFavoritesButton } from "./styled";
 import PokeCard from "@/components/PokeCard/PokeCard";
+import { getId } from "@/utils/getId";
+import FavoritePokemonButton from "@/components/showFav/showFav";
+import { faSearch } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 type List = {
   name: string;
@@ -14,31 +18,34 @@ export default function Home() {
   const [pokemonList, setPokemonList] = useState([]);
   const [page, setPage] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
+  const [showFavorites, setShowFavorites] = useState(false);
+  const favorites = JSON.parse(localStorage.getItem("favorites") || "[]");
+
   useEffect(() => {
-    PokeApi.get(`pokemon?limit=10&offset=${page}`).then((response) => {
-      setPokemonList(response.data.results);
-    });
-  }, [page]);
+    async function fetchData() {
+      try {
+        const response = await PokeApi.get("pokemon?limit=100");
+        setPokemonList(response.data.results);
+      } catch (error) {
+        console.error("Erro ao buscar a lista de Pokémon", error);
+      }
+    }
+
+    fetchData();
+  }, []);
+
+  const itemsPerPage = 10;
+  const totalPages = Math.ceil(pokemonList.length / itemsPerPage);
 
   function nextPage() {
-    setPage(page + 10);
+    if (page + 1 < totalPages) {
+      setPage(page + 1);
+    }
   }
 
   function previousPage() {
     if (page > 0) {
-      setPage(page - 10);
-    }
-  }
-
-  function getId(url: string) {
-    const partes = url.split("/");
-    const ultimoElemento = partes[partes.length - 2];
-    const numero = parseInt(ultimoElemento, 10);
-
-    if (!isNaN(numero)) {
-      return numero;
-    } else {
-      return -1;
+      setPage(page - 1);
     }
   }
 
@@ -49,6 +56,7 @@ export default function Home() {
       .toLowerCase()
       .normalize("NFD")
       .replace(/\p{Diacritic}/gu, "");
+
     return pokemonList.filter((item: List) =>
       item.name
         .toLowerCase()
@@ -58,6 +66,12 @@ export default function Home() {
     );
   }, [searchQuery, pokemonList]);
 
+  const startIdx = page * itemsPerPage;
+  const endIdx = startIdx + itemsPerPage;
+  const displayedPokemon = filteredData.slice(startIdx, endIdx);
+
+  console.log("???", favorites);
+
   return (
     <>
       <div className="pokeContainer">
@@ -66,15 +80,31 @@ export default function Home() {
           alt="pokemon-logo"
           src="https://raw.githubusercontent.com/PokeAPI/media/master/logo/pokeapi_256.png"
         />
-        <input
-          className="searchPokemon"
-          type="text"
-          onChange={(e) => setSearchQuery(e.target.value)}
-          placeholder="Econtrar Pokémon na página" //apenas o pokemon disponível na pagina
-        />
+        <div className="searchContainer">
+          <input
+            className="searchPokemon"
+            type="text"
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Procurar Pokémon"
+          />
+          <span className="searchIcon">
+            <FontAwesomeIcon icon={faSearch} />
+          </span>
+        </div>
+        <div className="showFav">
+          <ShowFavoritesButton onClick={() => setShowFavorites(!showFavorites)}>
+            {showFavorites ? "Mostrar Todos" : "Mostrar Favoritos"}
+          </ShowFavoritesButton>
+        </div>
         <Main>
-          {filteredData.length ? (
-            filteredData?.map((pokemon: List) => {
+          {showFavorites ? (
+            <FavoritePokemonButton
+              favorites={favorites}
+              pokemonList={displayedPokemon}
+              showFavorites={showFavorites}
+            />
+          ) : displayedPokemon.length ? (
+            displayedPokemon?.map((pokemon: List) => {
               console.log(pokemon.url);
               return (
                 <PokeCard
@@ -90,7 +120,8 @@ export default function Home() {
         </Main>
         <div className="pagination">
           <button onClick={() => previousPage()}>Voltar</button>
-          <h3>{page / 10 + 1}</h3>
+          <p>{page + 1}</p>
+          <span> de {totalPages} </span>
           <button onClick={() => nextPage()}>Próxima</button>
         </div>
       </div>
