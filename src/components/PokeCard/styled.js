@@ -23,8 +23,6 @@ export const CardTitle = styled.h2`
 `;
 
 export const FavoriteButton = styled.button`
-  background-color: #ffcc00;
-  color: #fff;
   border: none;
   padding: 4px 4px; 
   border-radius: 4px;
@@ -37,7 +35,7 @@ export const FavoriteButton = styled.button`
   transition: background-color 0.3s ease;
 
   &:hover {
-    background-color: #ff9900;
+    background-color: #ffcc00;
   }
 `;
 

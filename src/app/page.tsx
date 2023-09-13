@@ -8,6 +8,7 @@ import { getId } from "@/utils/getId";
 import FavoritePokemonButton from "@/components/showFav/showFav";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { ToastContainer } from "react-toastify";
 
 type List = {
   name: string;
@@ -124,6 +125,7 @@ export default function Home() {
           <span> de {totalPages} </span>
           <button onClick={() => nextPage()}>Próxima</button>
         </div>
+        <ToastContainer />
       </div>
     </>
   );
